@@ -8,9 +8,12 @@ class Rocket:
         self.hitbox.x = x
         self.hitbox.y = y
         self.speed = speed
+        self.bullets = []
 
     def draw(self,window):
         window.blit(self.texture,self.hitbox)
+        for bullet in self.bullets:
+            bullet.draw(window)
 
 
     def move(self):
@@ -23,6 +26,16 @@ class Rocket:
             self.hitbox.x -= self.speed
         if keys[pygame.K_UP]:
             self.hitbox.y -= self.speed
+        if keys[pygame.K_z]:
+            self.hitbox.y -= self.speed
+            self.bullets.append(Bullet(10,
+                                       10,10,
+                                    self.hitbox.x,self.hitbox.y,
+                                       "bullet.png"))
+
+
+        for bullet in self.bullets:
+            bullet.move()
 
 class UFO:
     def __init__(self,width,height,x,y,skin):
@@ -39,7 +52,19 @@ class UFO:
 
 
 
-
+class Bullet:
+    def __init__(self, speed, width, height, x, y, skin):
+        self.texture = pygame.image.load(skin)
+        self.texture = pygame.transform.scale(self.texture, [width, height])
+        self.hitbox = self.texture.get_rect()
+        self.hitbox.x = x
+        self.hitbox.y = y
+        self.speed = speed
+        self.bullets = []
+    def move(self):
+       self.hitbox.y -= self.speed
+    def draw(self,window):
+        window.blit(self.texture,self.hitbox)
 
 
 
@@ -47,7 +72,7 @@ pygame.init()
 
 window = pygame.display.set_mode([700,500])
 fps = pygame.time.Clock()
-rocket = Rocket(1,50,50,100,250,"rocket.png")
+rocket = Rocket(5,65, 85,250, 400,"rocket.png")
 
 
 
@@ -101,4 +126,4 @@ while True:
     pygame.display.flip()
 
 
-    fps.tick()
+    fps.tick(60)
