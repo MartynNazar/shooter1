@@ -1,4 +1,7 @@
+import random
+
 import pygame
+
 
 class Rocket:
     def __init__(self, speed, width, height, x, y, skin):
@@ -37,18 +40,22 @@ class Rocket:
         for bullet in self.bullets:
             bullet.move()
 
-class UFO:
-    def __init__(self,width,height,x,y,skin):
+class Enemy:
+    def __init__(self,speed,width,height,x,y,skin):
         self.texture = pygame.image.load(skin)
         self.texture = pygame.transform.scale(self.texture, [width,height])
         self.hitbox = self.texture.get_rect()
         self.hitbox.x = x
         self.hitbox.y = y
+        self.speed = speed
 
 
 
     def draw(self,window):
         window.blit(self.texture,self.hitbox)
+
+    def move(self):
+        self.hitbox.y += self.speed
 
 
 
@@ -81,49 +88,54 @@ rocket = Rocket(5,65, 85,250, 400,"rocket.png")
 background = pygame.image.load("galaxy.jpg")
 background = pygame.transform.scale(background, [700,500])
 
-ufos = [
-    UFO(50,50,10,10,"ufo.png"),
-    UFO(50,50,65,10,"ufo.png"),
-    UFO(50,50,120,10,"ufo.png"),
-    UFO(50,50,175,10,"ufo.png"),
-    UFO(50,50,230,10,"ufo.png"),
-    UFO(50,50,285,10,"ufo.png"),
-    UFO(50, 50, 345, 10, "ufo.png"),
-    UFO(50, 50, 400, 10, "ufo.png"),
-    UFO(50, 50, 455, 10, "ufo.png"),
-    UFO(50, 50, 510, 10, "ufo.png"),
-    UFO(50, 50, 565, 10, "ufo.png"),
-    UFO(50, 50, 620, 10, "ufo.png"),
+enemies = []
+y = 200
+for i in range(10):
+    enemies.append(Enemy(1, 50, 50, random.randint(0, 650), y, "asteroid.png"))
+    y -= 100
 
 
-
-]
-
+score = 0
+score_lbl = pygame.font.Font(None, 23).render("Score: " + str(score), True, [123,123,123])
 while True:
     for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x,y = pygame.mouse.get_pos()
-            print(x,y)
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+    score_lbl = pygame.font.Font(None,23).render("Score: " + str(score), True, [123, 123, 123])
+
+    for e in enemies:
+        e.move()
+        if e.hitbox.y > 500:
+            e.hitbox.y = -100
+            e.hitbox.x = random.randint(0, 650)
+
+    for e in enemies:
+        for b in rocket.bullets:
+            if e.hitbox.colliderect(b.hitbox):
+                b.hitbox.x = 5000
+                rocket.bullets.remove(b)
+                e.hitbox.y = -100
+                e.hitbox.x = random.randint(0, 650)
+                score += 1
+                break
     window.fill([123,123,123])
     window.blit(background,[0,0])
+    window.blit(score_lbl, [0, 0])
     rocket.draw(window)
     rocket.move()
 
-    window.fill([123, 123, 123])
-    window.blit(background, [0, 0])
-    rocket.draw(window)
 
 
-
-
-
+    for e in enemies:
+        e.draw(window)
 
     pygame.display.flip()
 
 
-    for ufo in ufos:
-        ufo.draw(window)
-    pygame.display.flip()
+
 
 
     fps.tick(60)
