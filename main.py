@@ -35,6 +35,7 @@ class Rocket:
                                        10,10,
                                     self.hitbox.x,self.hitbox.y,
                                        "bullet.png"))
+            shoot_sound.play()
 
 
         for bullet in self.bullets:
@@ -77,6 +78,13 @@ class Bullet:
 
 pygame.init()
 
+pygame.mixer.init()
+shoot_sound = pygame.mixer.Sound("fire.ogg")
+galaxy_sound = pygame.mixer.Sound("space.ogg")
+
+galaxy_sound.set_volume(0.5)
+galaxy_sound.play(-1)
+
 window = pygame.display.set_mode([700,500])
 fps = pygame.time.Clock()
 rocket = Rocket(5,65, 85,250, 400,"rocket.png")
@@ -104,6 +112,21 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
+
+    if score >= 500:
+        window.fill([0, 255, 0])
+        win_lbl = pygame.font.Font(None, 72).render("ТИ ВИГРАВ!", True, [255, 255, 255])
+        window.blit(win_lbl, [200, 200])
+        pygame.display.flip()
+        break
+
+    if score < 0:
+        window.fill([255, 0, 0])
+        lose_lbl = pygame.font.Font(None, 72).render("ТИ ПРОГРАВ!", True, [255, 255, 255])
+        window.blit(lose_lbl, [200, 200])
+        pygame.display.flip()
+        break
+
     score_lbl = pygame.font.Font(None,23).render("Score: " + str(score), True, [123, 123, 123])
 
     for e in enemies:
@@ -121,6 +144,13 @@ while True:
                 e.hitbox.x = random.randint(0, 650)
                 score += 1
                 break
+
+    for e in enemies:
+        if e.hitbox.colliderect(rocket.hitbox):
+            e.hitbox.y = -100
+            e.hitbox.x = random.randint(0, 650)
+            score -= 1
+
     window.fill([123,123,123])
     window.blit(background,[0,0])
     window.blit(score_lbl, [0, 0])
