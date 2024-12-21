@@ -75,14 +75,33 @@ class Bullet:
         window.blit(self.texture,self.hitbox)
 
 
+def win_window(window):
+    fps = pygame.time.Clock()
+    win_lbl = pygame.font.Font(None, 48).render("Ти переміг",True, [0, 0,0])
+    while True:
+        window.fill([0, 255, 0])
+        window.blit(win_lbl, [200, 200])
+        pygame.display.flip()
+
+        fps.tick(60)
+
+def lose_window(window):
+    fps = pygame.time.Clock()
+    lose_lbl = pygame.font.Font(None, 48).render("Ти програв",True, [0, 0,0])
+    while True:
+        window.fill([255, 0, 0])
+        window.blit(lose_lbl, [200, 200])
+        pygame.display.flip()
+
+        fps.tick(60)
+
+
 
 pygame.init()
 
 pygame.mixer.init()
 shoot_sound = pygame.mixer.Sound("fire.ogg")
 galaxy_sound = pygame.mixer.Sound("space.ogg")
-
-galaxy_sound.set_volume(0.5)
 galaxy_sound.play(-1)
 
 window = pygame.display.set_mode([700,500])
@@ -114,18 +133,13 @@ while True:
                 pygame.quit()
 
     if score >= 500:
-        window.fill([0, 255, 0])
-        win_lbl = pygame.font.Font(None, 72).render("ТИ ВИГРАВ!", True, [255, 255, 255])
-        window.blit(win_lbl, [200, 200])
-        pygame.display.flip()
-        break
+        win_window(window)
+
+
 
     if score < 0:
-        window.fill([255, 0, 0])
-        lose_lbl = pygame.font.Font(None, 72).render("ТИ ПРОГРАВ!", True, [255, 255, 255])
-        window.blit(lose_lbl, [200, 200])
-        pygame.display.flip()
-        break
+        lose_window(window)
+
 
     score_lbl = pygame.font.Font(None,23).render("Score: " + str(score), True, [123, 123, 123])
 
