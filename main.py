@@ -4,6 +4,8 @@ import pygame
 
 from file_help import read_from_file, write_in_file
 
+import menu
+
 
 def game():
     pygame.init()
