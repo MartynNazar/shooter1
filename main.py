@@ -6,6 +6,8 @@ from file_help import read_from_file, write_in_file
 
 import menu
 
+import shop
+
 
 def game():
     pygame.init()
@@ -144,7 +146,7 @@ def game():
                     pygame.quit()
                     return
 
-        if score >= 500:
+        if score >= 3000:
             win_window(window)
 
 

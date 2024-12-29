@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import *
 
 import main
 
+from shop import open_shop
+
 app = QApplication([])
 window = QWidget()
 
@@ -19,6 +21,7 @@ main_line.addWidget(levels_btn)
 main_line.addWidget(shop_btn)
 
 play_btn.clicked.connect(main.game)
+shop_btn.clicked.connect(open_shop)
 
 
 
